@@ -53,7 +53,6 @@ a{color:inherit}
 .hero p{font-family:var(--font-ui);font-size:clamp(1rem,2.4vw,1.3rem);max-width:640px;font-weight:400;
   animation:riseIn 700ms var(--ease-out) 340ms backwards}
 .hero .btn{animation:riseIn 700ms var(--ease-out) 440ms backwards}
-.hero-cut{display:block;position:absolute;left:0;right:0;bottom:0;z-index:1}
 @keyframes riseIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 @keyframes ruleIn{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 @keyframes heroSettle{from{transform:scale(1.07)}to{transform:scale(1)}}
