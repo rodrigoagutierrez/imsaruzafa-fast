@@ -6,6 +6,27 @@ if (toggle && nav) toggle.addEventListener('click', () => {
   toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
 });
 
+// Header: estado "scrolled" al pasar el hero.
+const header = document.querySelector('.site-header');
+if (header) {
+  const onScroll = () => header.toggleAttribute('data-scrolled', window.scrollY > 24);
+  onScroll();
+  addEventListener('scroll', onScroll, { passive: true });
+}
+
+// Reveal al scroll: una sola vez, sin pelear con el lector.
+const revealEls = document.querySelectorAll('[data-reveal]');
+if ('IntersectionObserver' in window) {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) { e.target.setAttribute('data-visible', ''); io.unobserve(e.target); }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  revealEls.forEach((el) => io.observe(el));
+} else {
+  revealEls.forEach((el) => el.setAttribute('data-visible', ''));
+}
+
 // Cookies: solo recuerdo local, sin rastreo.
 try {
   const key = 'imsa-cookie-ok';
