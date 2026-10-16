@@ -1,2 +1,9 @@
 .DS_Store
 Thumbs.db
+
+# Instalación local de skills/herramientas (no van al repo público)
+.agents/
+.claude/
+.codex/
+skills-lock.json
+.impeccable/
