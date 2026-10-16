@@ -1,5 +1,5 @@
 :root{
-  --green:#7ed957; --green-deep:#4fae1f; --ink:#141414; --muted:#5b5b5b;
+  --green:#7ed957; --green-deep:#3a8114; --green-hover:#8ce668; --ink:#141414; --muted:#5b5b5b;
   --paper:#ffffff; --paper-2:#f6f7f4; --dark:#141414; --line:#e8e8e6;
   --radius:16px; --radius-lg:24px; --max:1140px;
   --ease-out:cubic-bezier(.23,1,.32,1); --ease-in-out:cubic-bezier(.77,0,.175,1);
@@ -8,10 +8,12 @@
   --font-body:'Open Sans',system-ui,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scroll-padding-top:112px}
 body{font-family:var(--font-body);color:var(--ink);line-height:1.65;background:var(--paper);-webkit-font-smoothing:antialiased}
 img{max-width:100%;height:auto;display:block}
 a{color:inherit}
+:focus-visible{outline:2px solid var(--green-deep);outline-offset:2px;border-radius:4px}
+.pill :focus-visible,.hero :focus-visible,.reviews :focus-visible,footer :focus-visible,.wa:focus-visible,.cookie :focus-visible{outline-color:var(--green)}
 .wrap{max-width:var(--max);width:100%;margin:0 auto;padding:0 20px}
 
 /* ---------- Header: pill flotante ---------- */
@@ -26,8 +28,10 @@ a{color:inherit}
 .brand img{width:56px;height:56px;border-radius:50%;background:#fff;transition:transform 300ms var(--ease-out)}
 @media (hover:hover) and (pointer:fine){.brand:hover img{transform:rotate(-6deg) scale(1.05)}}
 .main-nav{margin:0;display:flex;gap:26px;justify-content:center;flex-wrap:wrap}
+.main-nav .ig-item{display:none}
 .main-nav a{font-family:var(--font-ui);font-weight:600;font-size:.9rem;color:var(--green);text-decoration:none;
   transition:color 200ms var(--ease-out),transform 200ms var(--ease-out)}
+.main-nav a[aria-current="page"]{color:#fff}
 @media (hover:hover) and (pointer:fine){
   .main-nav a:hover{color:#fff}
   .main-nav a:active{transform:scale(.97)}
@@ -125,7 +129,7 @@ header+main.section{padding-top:112px}
   text-transform:uppercase;color:var(--green-deep)}
 
 /* ---------- Opiniones (oscuro) ---------- */
-.reviews{background:var(--dark);border:0;color:#f2f2f2}
+.reviews{background:var(--dark);border:0;color:#f2f2f2;padding-bottom:120px}
 .reviews h2{color:#fff}
 .reviews .lead{color:#a9a9a9}
 .rev-track{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(280px,340px);gap:16px;overflow-x:auto;
@@ -141,7 +145,7 @@ header+main.section{padding-top:112px}
 @media (hover:hover) and (pointer:fine){.g-link:hover{transform:translateX(4px)}}
 
 /* ---------- Contacto ---------- */
-.contact-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:26px 0}
+.contact-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:26px 0}
 .ccard{border:1px solid var(--line);border-radius:var(--radius);padding:22px;background:var(--paper);
   transition:transform 300ms var(--ease-out),box-shadow 300ms var(--ease-out),border-color 300ms var(--ease-out)}
 @media (hover:hover) and (pointer:fine){
@@ -155,7 +159,14 @@ label{font-family:var(--font-ui);font-size:.82rem;font-weight:600;display:grid;g
 input,textarea{font:inherit;padding:12px 14px;border:1px solid #d9d9d9;border-radius:12px;width:100%;background:#fcfcfb;
   transition:border-color 200ms var(--ease-out),box-shadow 200ms var(--ease-out)}
 input:focus,textarea:focus{outline:none;border-color:var(--green-deep);box-shadow:0 0 0 3px rgba(126,217,87,.28)}
+input[aria-invalid]{border-color:#b3261e}
+.form-status{grid-column:1/-1;font-family:var(--font-ui);font-size:.85rem;min-height:1.2em;margin:0}
+.form-status[data-state="error"]{color:#b3261e;font-weight:600}
+.form-status[data-state="info"]{color:var(--muted)}
+.form-note{grid-column:1/-1;font-size:.82rem;color:var(--muted);margin:0}
+.form-note a{color:var(--green-deep);font-weight:600}
 button.btn{border:0;cursor:pointer;font-size:1rem}
+button.btn:disabled{opacity:.55;cursor:default;transform:none}
 .map{margin-top:22px;border:0;width:100%;height:340px;border-radius:var(--radius)}
 
 /* ---------- Botón ---------- */
@@ -164,7 +175,7 @@ button.btn{border:0;cursor:pointer;font-size:1rem}
   transition:transform 160ms var(--ease-out),box-shadow 300ms var(--ease-out),background 200ms var(--ease-out)}
 .btn:active{transform:scale(.97)}
 @media (hover:hover) and (pointer:fine){
-  .btn:hover{transform:translateY(-2px);background:#8ce668;box-shadow:0 14px 30px rgba(126,217,87,.4)}
+  .btn:hover{transform:translateY(-2px);background:var(--green-deep);color:#fff;box-shadow:0 14px 30px rgba(58,129,20,.4)}
 }
 
 /* ---------- Footer ---------- */
@@ -177,13 +188,14 @@ footer nav a{color:#fff;text-decoration:none;transition:color 200ms var(--ease-o
 @media (hover:hover) and (pointer:fine){footer nav a:hover{color:var(--green)}}
 
 /* ---------- Flotantes ---------- */
-.wa{position:fixed;right:18px;bottom:18px;z-index:60;background:#25d366;color:#fff;border-radius:999px;padding:13px 18px;
+.wa{position:fixed;right:18px;bottom:18px;z-index:60;background:#25d366;color:#141414;border-radius:999px;padding:13px 18px;
   font-family:var(--font-ui);font-weight:700;font-size:.85rem;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.25);
   display:inline-flex;align-items:center;gap:9px;
   animation:waIn 500ms var(--ease-out) 700ms backwards;
-  transition:transform 160ms var(--ease-out),box-shadow 300ms var(--ease-out),background 200ms var(--ease-out)}
+  transition:transform 160ms var(--ease-out),box-shadow 300ms var(--ease-out),background 200ms var(--ease-out),bottom 300ms var(--ease-out)}
 .wa svg{width:20px;height:20px;flex:none}
 .wa:active{transform:scale(.95)}
+.has-cookiebar .wa{bottom:96px}
 @media (hover:hover) and (pointer:fine){
   .wa:hover{background:#1eb856;transform:translateY(-3px);box-shadow:0 14px 32px rgba(0,0,0,.35)}
 }
@@ -229,6 +241,7 @@ footer nav a{color:#fff;text-decoration:none;transition:color 200ms var(--ease-o
     backdrop-filter:blur(14px);flex-direction:column;padding:16px 22px 20px;gap:14px;border-radius:20px;
     border:1px solid rgba(255,255,255,.1);box-shadow:0 18px 40px rgba(0,0,0,.4)}
   .main-nav.open{display:flex;animation:menuIn 200ms var(--ease-out)}
+  .main-nav .ig-item{display:inline-flex;align-items:center;gap:8px}
   .nav-toggle{display:block}
   .ig-link{display:none}
   .team-grid,.svc-row,.contact-cards,form.contact{grid-template-columns:1fr}
