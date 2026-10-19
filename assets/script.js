@@ -1,4 +1,4 @@
-// Menú móvil + banner cookies + anti-spam básico. Sin dependencias.
+// Menú móvil + banner cookies + anti-spam + stats count-up. Sin dependencias.
 const nav = document.querySelector('.main-nav');
 const toggle = document.querySelector('.nav-toggle');
 if (toggle && nav) {
@@ -8,8 +8,11 @@ if (toggle && nav) {
     toggle.textContent = open ? '✕' : '☰';
     toggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
   };
-  toggle.addEventListener('click', () => setMenu(!nav.classList.contains('open')));
+  toggle.addEventListener('click', (e) => { e.stopPropagation(); setMenu(!nav.classList.contains('open')); });
   nav.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
+  document.addEventListener('click', (e) => {
+    if (nav.classList.contains('open') && !nav.contains(e.target) && e.target !== toggle) setMenu(false);
+  });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && nav.classList.contains('open')) { setMenu(false); toggle.focus(); }
   });
@@ -36,7 +39,7 @@ if ('IntersectionObserver' in window) {
   revealEls.forEach((el) => el.setAttribute('data-visible', ''));
 }
 
-// Cookies: solo recuerdo local, sin rastreo. Si el aviso está visible, sube el FAB.
+// Cookies: solo recuerdo local, sin rastreo.
 try {
   const key = 'imsa-cookie-ok';
   const bar = document.getElementById('cookie-bar');
@@ -53,7 +56,31 @@ try {
   }
 } catch (e) { /* modo privado: no pasa nada */ }
 
-// Formulario: valida y abre el email con los datos (sin backend, rapidísimo).
+// Stats count-up (solo números enteros con data-count).
+const countEls = document.querySelectorAll('[data-count]');
+if ('IntersectionObserver' in window && countEls.length) {
+  const cio = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const target = parseInt(el.dataset.count, 10);
+      if (isNaN(target)) { cio.unobserve(el); return; }
+      const dur = 900;
+      const start = performance.now();
+      const step = (now) => {
+        const t = Math.min(1, (now - start) / dur);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.round(target * eased);
+        if (t < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+      cio.unobserve(el);
+    });
+  }, { threshold: 0.4 });
+  countEls.forEach((el) => cio.observe(el));
+}
+
+// Formulario: valida y abre el email; estado inline + fallbacks (sin alert).
 const form = document.getElementById('contact-form');
 if (form) {
   const status = form.querySelector('.form-status');
@@ -63,18 +90,20 @@ if (form) {
   const say = (msg, state) => {
     if (!status) return;
     status.textContent = msg;
-    status.dataset.state = state;
+    status.dataset.state = state || '';
   };
   if (sum) sum.addEventListener('input', () => say('', ''));
   form.addEventListener('submit', (ev) => {
     ev.preventDefault();
     if (busy) return;
-    const q = (n) => form.querySelector(`[name="${n}"]`).value.trim();
+    const q = (n) => { const el = form.querySelector(`[name="${n}"]`); return el ? el.value.trim() : ''; };
     if (sum && sum.value.trim() !== '17') {
       say('Revisa la suma anti-spam: 12 + 5 = 17.', 'error');
       sum.focus();
+      sum.setAttribute('aria-invalid', 'true');
       return;
     }
+    if (sum) sum.removeAttribute('aria-invalid');
     busy = true;
     if (btn) btn.disabled = true;
     say('Abriendo tu app de correo… Si no se abre, llámanos al +34 613 09 28 48 o usa WhatsApp.', 'info');
@@ -82,5 +111,16 @@ if (form) {
     const body = encodeURIComponent(`Nombre: ${q('nombre')} ${q('apellidos')}\nTeléfono: ${q('telefono')}\nEmail: ${q('email')}\n\n${q('mensaje')}`);
     location.href = `mailto:imsa.ruzafa@gmail.com?subject=${subject}&body=${body}`;
     setTimeout(() => { busy = false; if (btn) btn.disabled = false; }, 1500);
+  });
+}
+
+// Formulario colapsable (contacto): toggle panel.
+const formToggle = document.querySelector('.form-toggle');
+const formPanel = document.querySelector('.form-panel');
+if (formToggle && formPanel) {
+  formToggle.addEventListener('click', () => {
+    const open = formPanel.classList.toggle('open');
+    formToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    formToggle.querySelector('.ft-label').textContent = open ? 'Ocultar formulario' : 'Enviar un mensaje por email';
   });
 }
